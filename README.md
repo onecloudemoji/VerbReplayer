@@ -6,4 +6,6 @@ Inspired by https://dreyand.rs/code/review/2024/10/27/what-are-my-options-cyberp
 
 Results are grouped by domain and by first part of the path. Requests can be sent to repeater for futher investigation. Highlight items to preserve them when clearing logs.
 
-Results are not persistent, send anything useful to repeater before closing burp.
+Log keeps a track of all replayed requests performed, including 4XX and 5XX to easily validate that you have infact been over a particular part of the site.
+
+Results are now persistent!
