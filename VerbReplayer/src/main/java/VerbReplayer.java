@@ -6,11 +6,9 @@ import burp.api.montoya.proxy.http.ProxyRequestToBeSentAction;
 import burp.api.montoya.proxy.http.ProxyRequestReceivedAction;
 import burp.api.montoya.http.message.requests.HttpRequest;
 import burp.api.montoya.http.message.responses.HttpResponse;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class VerbReplayer implements BurpExtension, ProxyRequestHandler {
@@ -50,22 +48,21 @@ public class VerbReplayer implements BurpExtension, ProxyRequestHandler {
             String hostname = url.getHost();
             String uri = url.getPath();
 
-            List<String> selectedVerbs = userInterface.getSelectedVerbs();
+            // Get allowed HTTP verbs from the History tab's checkboxes (which control replay).
+            java.util.List<String> selectedVerbs = userInterface.getSelectedVerbs();
 
             for (String verb : selectedVerbs) {
                 HttpRequest modifiedRequest = interceptedRequest.withMethod(verb);
                 HttpResponse response = api.http().sendRequest(modifiedRequest).response();
-
                 int statusCode = response.statusCode();
-                if (statusCode >= 200 && statusCode < 400 && statusCode != 204) {
-                    userInterface.logTraffic(
-                            verb,
-                            hostname + uri,
-                            statusCode,
-                            modifiedRequest,
-                            response.toString()
-                    );
-                }
+                // Log every replayed request; the UI will sort them into success/error lists.
+                userInterface.logTraffic(
+                        verb,
+                        hostname + uri,
+                        statusCode,
+                        modifiedRequest,
+                        response.toString()
+                );
             }
         } catch (Exception e) {
             api.logging().logToError("Error parsing URL: " + e.getMessage());
